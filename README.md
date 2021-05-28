@@ -30,14 +30,15 @@ Any combination of the following is tested:
 | Variable | Default | Description
 |-|-|-|
 | ufw_ipv6 | `yes` | `no` disables IPv6 support |
-| interface | | By default rule is applied to all interfaces |
+| route | `no` | Apply the rule for routed/forwarded packets | 
+| interface | | By default a rule is applied to all interfaces, not applied when using interface_in and interface_out |
 | interface_in | | Interface for incoming traffic |
 | interface_out | | Interface for outgoing traffic |
-| direction | `in` | Direction of traffic |
+| direction | `in` | Direction of traffic, not applied when using interface_in and interface_out |
 | rule | | Choices are `allow`, `deny`, `limit` and `reject` |
-| from_ip | `any` | Source IP |
+| from_ip | `any` | Source IP or subnet |
 | from_port | | Source port |
-| to_ip | `any` | Destination IP |
+| to_ip | `any` | Destination IP or subnet |
 | to_port | | Destination port |
 | proto | `any` | Choices for the protocol: `any`, `tcp`, `udp`, `ipv6`, `esp`, `ah`, `gre` and `icmp` |
 | comment | | Comment for the rule |
@@ -62,6 +63,17 @@ Just clone or download this role into your `roles` folder and set up the playboo
       - rule: limit
         to_port: 22
         proto: tcp
+      - rule: allow
+        route: yes
+        interface_in: eth0
+        interface_out: eth1
+        to_port: 8080
+        proto: tcp
+      - rule: deny
+        route: yes
+        interface: eth1
+        from_ip: 1.2.3.0/24
+        to_ip: 5.5.0.0/16
   roles:
       - ansible_ufw
 ```
