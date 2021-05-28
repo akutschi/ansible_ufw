@@ -26,8 +26,9 @@
 - name: Flush handlers
   meta: flush_handlers 
 
-- name: Add rules
+- name: Add rules - 1 
   ufw:
+    route: "{{ item.route | default('no') }}"
     interface: "{{ item.interface | default('') }}"
     direction: "{{ item.direction | default('in') }}"
     rule: "{{ item.rule }}"
@@ -45,7 +46,7 @@
     - item.interface_out is not defined
   notify: Restart ufw
 
-- name: Add routing rules
+- name: Add rules - 2
   ufw:
     route: yes
     interface_in: "{{ item.interface_in }}"
