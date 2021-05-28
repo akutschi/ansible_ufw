@@ -1,2 +1,4 @@
 ---
 # defaults file for ansible_ufw
+
+ufw_ipv6: yes

@@ -1,2 +1,50 @@
 ---
 # tasks file for ansible_ufw
+
+- name: Install ufw
+  apt:
+    name:
+      - ufw
+    state: present
+    update_cache: yes
+
+- name: Update default ufw configuration
+  template:
+    src: ufw.j2
+    dest: /etc/default/ufw
+    owner: root
+    group: root
+    mode: 0644 
+  notify: Restart ufw
+  register: ufw_config
+
+- name: Activate new default configuration
+  ufw: 
+    state: reset
+  when: ufw_config is changed
+
+- name: Flush handlers
+  meta: flush_handlers 
+
+- name: Add rules
+  ufw:
+    interface: "{{ item.interface | default('') }}"
+    interface_in: "{{ item.interface_in | default(omit) }}"
+    interface_out: "{{ item.interface_out | default(omit) }}"
+    direction: "{{ item.direction | default('in') }}"
+    rule: "{{ item.rule }}"
+    from_ip: "{{ item.from_ip | default('any') }}"
+    from_port: "{{ item.from_port | default('') }}"
+    to_ip: "{{ item.to_ip | default('any') }}"
+    to_port: "{{ item.to_port | default('') }}"
+    proto: "{{ item.proto | default('any') }}"
+    comment: "{{ item.comment | default('') }}"
+    delete: "{{ item.delete | default('no') }}"
+  with_items:
+    - "{{ ufw_rules | default([]) }}"
+  notify: Restart ufw
+
+- name: Reload and enable firewall on boot
+  ufw: 
+    state: enabled
+  when: ufw_rules is defined
