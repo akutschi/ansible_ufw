@@ -25,6 +25,14 @@ Any combination of the following is tested:
   - 3.8
   - 3.9
 
+## Install Role
+
+To install this role into your `roles` folder just clone, download or run: 
+
+```bash
+ansible-galaxy install --roles-path ./roles git+https://github.com/akutschi/ansible_ufw.git,v0.0.2
+```
+
 ## Role Variables
 
 | Variable | Default | Description
@@ -52,8 +60,16 @@ This role does not have any dependencies.
 
 ## Example Playbook
 
-The setup is quite simple.
-Just clone or download this role into your `roles` folder and set up the playbook similar to this example:
+This is the most basic playbook without any rules and a basic UFW configuration:
+
+```yml
+---
+- hosts: servers
+  roles:
+      - ansible_ufw
+```
+
+This is an example playbook with some firewall rules: 
 
 ```yml
 ---
